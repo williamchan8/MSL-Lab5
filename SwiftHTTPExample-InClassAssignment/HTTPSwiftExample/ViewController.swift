@@ -15,7 +15,7 @@
 //    ifconfig |grep inet   
 // to see what your public facing IP address is, the ip address can be used here
 //let SERVER_URL = "http://erics-macbook-pro.local:8000" // change this for your server name!!!
-let SERVER_URL = "http://10.0.1.6:8000" // change this for your server name!!!
+let SERVER_URL = "http://192.168.0.11:8000" // change this for your server name!!!
 
 import UIKit
 import CoreMotion
@@ -457,7 +457,13 @@ class ViewController: UIViewController, URLSessionDelegate {
             return NSDictionary() // just return empty
         }
     }
-
+    
+    
+    @IBAction func stepperDSID(_ sender: UIStepper) {
+        
+        //self.dsid = (sender as AnyObject).value
+    }
+    
 }
 
 

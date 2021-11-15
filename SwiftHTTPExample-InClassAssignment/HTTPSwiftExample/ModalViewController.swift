@@ -26,6 +26,8 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
 
         self.ModelPicker.delegate = self
         self.ModelPicker.dataSource = self
+        
+        self.ModelPicker.selectRow(0, inComponent: 0, animated: true)
         // Do any additional setup after loading the view.
     }
     

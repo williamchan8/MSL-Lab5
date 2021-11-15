@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -124,10 +125,102 @@
             </objects>
             <point key="canvasLocation" x="293.47826086956525" y="197.20982142857142"/>
         </scene>
+        <!--Modal View Controller-->
+        <scene sceneID="8VN-Kk-sDj">
+            <objects>
+                <viewController storyboardIdentifier="ModalViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="KCk-bW-CRl" customClass="ModalViewController" customModule="HTTPSwiftExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="LOm-9p-3Xe"/>
+                        <viewControllerLayoutGuide type="bottom" id="y2s-Ep-Lup"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="y4v-Mi-mFv">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="buh-gz-9pK">
+                                <rect key="frame" x="0.0" y="61" width="375" height="162"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="162" id="2ox-uV-eGu"/>
+                                </constraints>
+                            </pickerView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="09w-Zc-03K">
+                                <rect key="frame" x="139" y="231" width="186" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gd5-16-CQ3">
+                                <rect key="frame" x="31" y="231" width="100" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="68G-Hv-EOy">
+                                <rect key="frame" x="31" y="274" width="100" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="Rbu-g2-Vq5"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Vsz-5n-MRw"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aN3-4g-5f8">
+                                <rect key="frame" x="104" y="339" width="167" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Submit &amp; Train Model"/>
+                                <connections>
+                                    <action selector="submitParameters:" destination="KCk-bW-CRl" eventType="touchUpInside" id="m2r-ks-SvI"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rBx-rf-ujD">
+                                <rect key="frame" x="139" y="275" width="186" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="09w-Zc-03K" firstAttribute="trailing" secondItem="rBx-rf-ujD" secondAttribute="trailing" id="4bE-Gu-SZm"/>
+                            <constraint firstItem="aN3-4g-5f8" firstAttribute="centerX" secondItem="y4v-Mi-mFv" secondAttribute="centerX" id="5tf-MW-b6u"/>
+                            <constraint firstItem="aN3-4g-5f8" firstAttribute="top" secondItem="68G-Hv-EOy" secondAttribute="bottom" constant="30" id="72t-Tc-eoy"/>
+                            <constraint firstItem="buh-gz-9pK" firstAttribute="leading" secondItem="y4v-Mi-mFv" secondAttribute="leadingMargin" constant="-16" id="8Ig-MA-ngQ"/>
+                            <constraint firstItem="aN3-4g-5f8" firstAttribute="leading" secondItem="y4v-Mi-mFv" secondAttribute="leadingMargin" constant="88" id="MTf-kd-pRp"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="top" secondItem="y4v-Mi-mFv" secondAttribute="top" constant="274" id="NiU-Jm-Jtm"/>
+                            <constraint firstItem="09w-Zc-03K" firstAttribute="top" secondItem="Gd5-16-CQ3" secondAttribute="top" id="Sih-IH-yxF"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="trailing" secondItem="Gd5-16-CQ3" secondAttribute="trailing" id="Tkc-XS-Lk5"/>
+                            <constraint firstItem="09w-Zc-03K" firstAttribute="leading" secondItem="rBx-rf-ujD" secondAttribute="leading" id="Ybl-05-tiN"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="centerY" secondItem="rBx-rf-ujD" secondAttribute="centerY" id="aY5-BL-7bV"/>
+                            <constraint firstItem="aN3-4g-5f8" firstAttribute="centerX" secondItem="buh-gz-9pK" secondAttribute="centerX" id="caE-J4-Gdu"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="09w-Zc-03K" secondAttribute="trailing" constant="34" id="g87-8A-VvU"/>
+                            <constraint firstItem="09w-Zc-03K" firstAttribute="centerY" secondItem="Gd5-16-CQ3" secondAttribute="centerY" id="hqD-Dp-uaO"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="bottom" secondItem="rBx-rf-ujD" secondAttribute="bottom" id="iQf-gb-Ouk"/>
+                            <constraint firstItem="rBx-rf-ujD" firstAttribute="leading" secondItem="68G-Hv-EOy" secondAttribute="trailing" constant="8" id="q1G-AU-rGh"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="leading" secondItem="Gd5-16-CQ3" secondAttribute="leading" id="qYr-ob-TYO"/>
+                            <constraint firstItem="buh-gz-9pK" firstAttribute="top" secondItem="LOm-9p-3Xe" secondAttribute="bottom" constant="61" id="su9-pB-Wwu"/>
+                            <constraint firstItem="09w-Zc-03K" firstAttribute="top" secondItem="buh-gz-9pK" secondAttribute="bottom" constant="8" id="u3h-qa-2vc"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="leading" secondItem="y4v-Mi-mFv" secondAttribute="leadingMargin" constant="15" id="veA-VS-ERC"/>
+                            <constraint firstItem="68G-Hv-EOy" firstAttribute="top" secondItem="Gd5-16-CQ3" secondAttribute="bottom" constant="8" id="wnL-LT-5Y4"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="ModelPicker" destination="buh-gz-9pK" id="weU-i4-PRx"/>
+                        <outlet property="parameter2Label" destination="68G-Hv-EOy" id="0qj-qg-8D4"/>
+                        <outlet property="parameter2TextField" destination="rBx-rf-ujD" id="iej-ap-7qk"/>
+                        <outlet property="parameterLabel" destination="Gd5-16-CQ3" id="ztb-P6-UPD"/>
+                        <outlet property="parameterTextField" destination="09w-Zc-03K" id="E6T-6n-cTc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QS7-M4-qh9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1173.5999999999999" y="192.95352323838082"/>
+        </scene>
     </scenes>
     <resources>
         <systemColor name="lightTextColor">
             <color white="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

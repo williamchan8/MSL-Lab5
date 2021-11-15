@@ -20,7 +20,11 @@ let SERVER_URL = "http://192.168.0.11:8000" // change this for your server name!
 import UIKit
 import CoreMotion
 
-class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate,UIPickerViewDataSource {
+protocol ModalDelegate {
+    func setParametersAndTrain(modelType: Int, withParameters parameters:[Int])
+}
+
+class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate,UIPickerViewDataSource,ModalDelegate {
     
     // MARK: Class Properties
     lazy var session: URLSession = {
@@ -267,7 +271,13 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
     
     @IBAction func makeModel(_ sender: AnyObject) {
+        let modalController = storyboard?.instantiateViewController(withIdentifier: "ModalViewController") as! ModalViewController
+        modalController.delegate = self
+        self.present(modalController, animated: true, completion: nil)
         
+    }
+    
+    func setParametersAndTrain(modelType: Int, withParameters parameters:[Int]) {
         // create a GET request for server to update the ML model with current data
         let baseURL = "\(SERVER_URL)/UpdateModel"
         let query = "?dsid=\(self.dsid)"
@@ -291,9 +301,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                 }
                                                                     
         })
-        
+
         dataTask.resume() // start the task
-        
     }
     
     @IBAction func testAudio(_ sender: Any) {
@@ -358,7 +367,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 2
+            return 1
         }
         
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -376,6 +385,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         }
     }
     
+    
+
     
     
 }

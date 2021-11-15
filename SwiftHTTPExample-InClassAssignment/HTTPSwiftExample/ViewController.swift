@@ -20,7 +20,7 @@ let SERVER_URL = "http://192.168.0.11:8000" // change this for your server name!
 import UIKit
 import CoreMotion
 
-class ViewController: UIViewController, URLSessionDelegate {
+class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate,UIPickerViewDataSource {
     
     // MARK: Class Properties
     lazy var session: URLSession = {
@@ -35,6 +35,11 @@ class ViewController: UIViewController, URLSessionDelegate {
             delegateQueue:self.operationQueue)
     }()
     
+    let audio = AudioModel(buffer_size: 44100)
+    
+    lazy var dataModel = {return DataModel.sharedInstance()}()
+
+    
     let operationQueue = OperationQueue()
     let motionOperationQueue = OperationQueue()
     let calibrationOperationQueue = OperationQueue()
@@ -47,75 +52,23 @@ class ViewController: UIViewController, URLSessionDelegate {
     var isCalibrating = false
     
     var isWaitingForMotionData = false
+    var instrumentData = ["None","Piano"]
     
+    var fftData:[Float] = Array.init(repeating: 0.0, count: 44100/2)
+    var timeData:[Float] = Array.init(repeating: 0.0, count: 44100)
+    
+    @IBOutlet weak var stepperDSIDOutlet: UIStepper!
     @IBOutlet weak var dsidLabel: UILabel!
-    @IBOutlet weak var upArrow: UILabel!
-    @IBOutlet weak var rightArrow: UILabel!
-    @IBOutlet weak var downArrow: UILabel!
-    @IBOutlet weak var leftArrow: UILabel!
-    @IBOutlet weak var largeMotionMagnitude: UIProgressView!
+    
+    @IBOutlet weak var instrumentPhoto: UIImageView!
+    
+    @IBOutlet weak var instrumentPicker: UIPickerView!
+    
+    
+    @IBOutlet weak var didRecord: UILabel!
     
     // MARK: Class Properties with Observers
-    enum CalibrationStage {
-        case notCalibrating
-        case up
-        case right
-        case down
-        case left
-    }
     
-    var calibrationStage:CalibrationStage = .notCalibrating {
-        didSet{
-            switch calibrationStage {
-            case .up:
-                self.isCalibrating = true
-                DispatchQueue.main.async{
-                    self.setAsCalibrating(self.upArrow)
-                    self.setAsNormal(self.rightArrow)
-                    self.setAsNormal(self.leftArrow)
-                    self.setAsNormal(self.downArrow)
-                }
-                break
-            case .left:
-                self.isCalibrating = true
-                DispatchQueue.main.async{
-                    self.setAsNormal(self.upArrow)
-                    self.setAsNormal(self.rightArrow)
-                    self.setAsCalibrating(self.leftArrow)
-                    self.setAsNormal(self.downArrow)
-                }
-                break
-            case .down:
-                self.isCalibrating = true
-                DispatchQueue.main.async{
-                    self.setAsNormal(self.upArrow)
-                    self.setAsNormal(self.rightArrow)
-                    self.setAsNormal(self.leftArrow)
-                    self.setAsCalibrating(self.downArrow)
-                }
-                break
-                
-            case .right:
-                self.isCalibrating = true
-                DispatchQueue.main.async{
-                    self.setAsNormal(self.upArrow)
-                    self.setAsCalibrating(self.rightArrow)
-                    self.setAsNormal(self.leftArrow)
-                    self.setAsNormal(self.downArrow)
-                }
-                break
-            case .notCalibrating:
-                self.isCalibrating = false
-                DispatchQueue.main.async{
-                    self.setAsNormal(self.upArrow)
-                    self.setAsNormal(self.rightArrow)
-                    self.setAsNormal(self.leftArrow)
-                    self.setAsNormal(self.downArrow)
-                }
-                break
-            }
-        }
-    }
     
     var dsid:Int = 0 {
         didSet{
@@ -127,118 +80,16 @@ class ViewController: UIViewController, URLSessionDelegate {
         }
     }
     
-    @IBAction func magnitudeChanged(_ sender: UISlider) {
-        self.magValue = Double(sender.value)
-    }
+   
     
     // MARK: Core Motion Updates
-    func startMotionUpdates(){
-        // some internal inconsistency here: we need to ask the device manager for device
-        
-        if self.motion.isDeviceMotionAvailable{
-            self.motion.deviceMotionUpdateInterval = 1.0/200
-            self.motion.startDeviceMotionUpdates(to: motionOperationQueue, withHandler: self.handleMotion )
-        }
-    }
     
-    func handleMotion(_ motionData:CMDeviceMotion?, error:Error?){
-        if let accel = motionData?.userAcceleration {
-            self.ringBuffer.addNewData(xData: accel.x, yData: accel.y, zData: accel.z)
-            let mag = fabs(accel.x)+fabs(accel.y)+fabs(accel.z)
-            
-            DispatchQueue.main.async{
-                //show magnitude via indicator
-                self.largeMotionMagnitude.progress = Float(mag)/0.2
-            }
-            
-            if mag > self.magValue {
-                // buffer up a bit more data and then notify of occurrence
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
-                    self.calibrationOperationQueue.addOperation {
-                        // something large enough happened to warrant
-                        self.largeMotionEventOccurred()
-                    }
-                })
-            }
-        }
-    }
     
     
     //MARK: Calibration procedure
-    func largeMotionEventOccurred(){
-        if(self.isCalibrating){
-            //send a labeled example
-            if(self.calibrationStage != .notCalibrating && self.isWaitingForMotionData)
-            {
-                self.isWaitingForMotionData = false
-                
-                // send data to the server with label
-                sendFeatures(self.ringBuffer.getDataAsVector(),
-                             withLabel: self.calibrationStage)
-                
-                self.nextCalibrationStage()
-            }
-        }
-        else
-        {
-            if(self.isWaitingForMotionData)
-            {
-                self.isWaitingForMotionData = false
-                //predict a label
-                getPrediction(self.ringBuffer.getDataAsVector())
-                // dont predict again for a bit
-                setDelayedWaitingToTrue(2.0)
-                
-            }
-        }
-    }
     
-    func nextCalibrationStage(){
-        switch self.calibrationStage {
-        case .notCalibrating:
-            //start with up arrow
-            self.calibrationStage = .up
-            setDelayedWaitingToTrue(1.0)
-            break
-        case .up:
-            //go to right arrow
-            self.calibrationStage = .right
-            setDelayedWaitingToTrue(1.0)
-            break
-        case .right:
-            //go to down arrow
-            self.calibrationStage = .down
-            setDelayedWaitingToTrue(1.0)
-            break
-        case .down:
-            //go to left arrow
-            self.calibrationStage = .left
-            setDelayedWaitingToTrue(1.0)
-            break
-            
-        case .left:
-            //end calibration
-            self.calibrationStage = .notCalibrating
-            setDelayedWaitingToTrue(1.0)
-            break
-        }
-    }
     
-    func setDelayedWaitingToTrue(_ time:Double){
-        DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
-            self.isWaitingForMotionData = true
-        })
-    }
     
-    func setAsCalibrating(_ label: UILabel){
-        label.layer.add(animation, forKey:nil)
-        label.backgroundColor = UIColor.red
-    }
-    
-    func setAsNormal(_ label: UILabel){
-        label.layer.add(animation, forKey:nil)
-        label.backgroundColor = UIColor.white
-    }
     
     // MARK: View Controller Life Cycle
     override func viewDidLoad() {
@@ -252,8 +103,12 @@ class ViewController: UIViewController, URLSessionDelegate {
         animation.duration = 0.5
         
         
-        // setup core motion handlers
-        startMotionUpdates()
+        self.instrumentPicker.delegate = self
+        self.instrumentPicker.dataSource = self
+        
+        instrumentPicker.selectRow(0, inComponent: 0, animated: false)
+        
+        print(self.dataModel.numberOfImages())
         
         dsid = 1 // set this and it will update UI
     }
@@ -287,13 +142,26 @@ class ViewController: UIViewController, URLSessionDelegate {
     
     //MARK: Calibration
     @IBAction func startCalibration(_ sender: AnyObject) {
-        self.isWaitingForMotionData = false // dont do anything yet
-        nextCalibrationStage()
+        
+        audio.startMicrophoneProcessing(withFps: 10)
+        audio.play()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000), execute: {
+            self.fftData = self.audio.fftData
+            self.timeData = self.audio.timeData
+            
+            self.audio.endAudioProcessing()
+            
+            self.sendFeatures(self.fftData,withLabel: self.instrumentPicker.selectedRow(inComponent: 0))
+        })
+        
+        
+        
         
     }
     
     //MARK: Comm with Server
-    func sendFeatures(_ array:[Double], withLabel label:CalibrationStage){
+    func sendFeatures(_ array:[Float], withLabel label:Int){
         let baseURL = "\(SERVER_URL)/AddDataPoint"
         let postUrl = URL(string: "\(baseURL)")
         
@@ -301,11 +169,13 @@ class ViewController: UIViewController, URLSessionDelegate {
         var request = URLRequest(url: postUrl!)
         
         // data to send in body of post request (send arguments as json)
+        
+        
         let jsonUpload:NSDictionary = ["feature":array,
                                        "label":"\(label)",
                                        "dsid":self.dsid]
         
-        
+        print(jsonUpload)
         let requestBody:Data? = self.convertDictionaryToData(with:jsonUpload)
         
         request.httpMethod = "POST"
@@ -358,7 +228,7 @@ class ViewController: UIViewController, URLSessionDelegate {
                             let jsonDictionary = self.convertDataToDictionary(with: data)
                             
                             let labelResponse = jsonDictionary["prediction"]!
-                            print(labelResponse)
+                            print(labelResponse)    
                             self.displayLabelResponse(labelResponse as! String)
 
                         }
@@ -369,34 +239,9 @@ class ViewController: UIViewController, URLSessionDelegate {
     }
     
     func displayLabelResponse(_ response:String){
-        switch response {
-        case "['up']":
-            blinkLabel(upArrow)
-            break
-        case "['down']":
-            blinkLabel(downArrow)
-            break
-        case "['left']":
-            blinkLabel(leftArrow)
-            break
-        case "['right']":
-            blinkLabel(rightArrow)
-            break
-        default:
-            print("Unknown")
-            break
-        }
-    }
-    
-    func blinkLabel(_ label:UILabel){
-        DispatchQueue.main.async {
-            self.setAsCalibrating(label)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
-                self.setAsNormal(label)
-            })
-        }
         
     }
+    
     
     @IBAction func makeModel(_ sender: AnyObject) {
         
@@ -460,9 +305,29 @@ class ViewController: UIViewController, URLSessionDelegate {
     
     
     @IBAction func stepperDSID(_ sender: UIStepper) {
-        
-        //self.dsid = (sender as AnyObject).value
+        let temp = sender.value
+        self.dsid = Int(temp)
     }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+            return 1
+        }
+        
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return instrumentData.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return instrumentData[row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if let name = instrumentData[row] as? String {
+            instrumentPhoto?.image? = self.dataModel.getImageWithName(name)
+        }
+    }
+    
+    
     
 }
 

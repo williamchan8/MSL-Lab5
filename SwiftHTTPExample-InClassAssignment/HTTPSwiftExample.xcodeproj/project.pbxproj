@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E8D07442742040900C95F55 /* AudioModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D07432742040900C95F55 /* AudioModel.swift */; };
+		1E8D074C274204AF00C95F55 /* CircularBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D0746274204AF00C95F55 /* CircularBuffer.m */; };
+		1E8D074D274204AF00C95F55 /* FFTHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D0749274204AF00C95F55 /* FFTHelper.m */; };
+		1E8D074E274204AF00C95F55 /* Novocaine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D074A274204AF00C95F55 /* Novocaine.m */; };
+		1E8D07542742187E00C95F55 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D07532742187E00C95F55 /* DataModel.m */; };
+		1E8D075627421D0D00C95F55 /* images.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1E8D075527421D0D00C95F55 /* images.plist */; };
 		B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67483DA1ACA2D6800A9970E /* AppDelegate.swift */; };
 		B67483DD1ACA2D6800A9970E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67483DC1ACA2D6800A9970E /* ViewController.swift */; };
 		B67483E01ACA2D6800A9970E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B67483DE1ACA2D6800A9970E /* Main.storyboard */; };
@@ -16,6 +22,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E8D07432742040900C95F55 /* AudioModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioModel.swift; sourceTree = "<group>"; };
+		1E8D0745274204AF00C95F55 /* HTTPSwiftExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HTTPSwiftExample-Bridging-Header.h"; sourceTree = "<group>"; };
+		1E8D0746274204AF00C95F55 /* CircularBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CircularBuffer.m; path = AudioDSPUtils/CircularBuffer.m; sourceTree = SOURCE_ROOT; };
+		1E8D0747274204AF00C95F55 /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CircularBuffer.h; path = AudioDSPUtils/CircularBuffer.h; sourceTree = SOURCE_ROOT; };
+		1E8D0748274204AF00C95F55 /* FFTHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FFTHelper.h; path = AudioDSPUtils/FFTHelper.h; sourceTree = SOURCE_ROOT; };
+		1E8D0749274204AF00C95F55 /* FFTHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FFTHelper.m; path = AudioDSPUtils/FFTHelper.m; sourceTree = SOURCE_ROOT; };
+		1E8D074A274204AF00C95F55 /* Novocaine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Novocaine.m; path = AudioDSPUtils/Novocaine.m; sourceTree = SOURCE_ROOT; };
+		1E8D074B274204AF00C95F55 /* Novocaine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Novocaine.h; path = AudioDSPUtils/Novocaine.h; sourceTree = SOURCE_ROOT; };
+		1E8D07522742187E00C95F55 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
+		1E8D07532742187E00C95F55 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
+		1E8D075527421D0D00C95F55 /* images.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = images.plist; sourceTree = "<group>"; };
 		B67483D51ACA2D6800A9970E /* HTTPSwiftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPSwiftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B67483D91ACA2D6800A9970E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B67483DA1ACA2D6800A9970E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -56,13 +73,24 @@
 		B67483D71ACA2D6800A9970E /* HTTPSwiftExample */ = {
 			isa = PBXGroup;
 			children = (
+				1E8D07522742187E00C95F55 /* DataModel.h */,
+				1E8D07532742187E00C95F55 /* DataModel.m */,
+				1E8D0747274204AF00C95F55 /* CircularBuffer.h */,
+				1E8D0746274204AF00C95F55 /* CircularBuffer.m */,
+				1E8D0748274204AF00C95F55 /* FFTHelper.h */,
+				1E8D0749274204AF00C95F55 /* FFTHelper.m */,
+				1E8D074B274204AF00C95F55 /* Novocaine.h */,
+				1E8D074A274204AF00C95F55 /* Novocaine.m */,
+				1E8D07432742040900C95F55 /* AudioModel.swift */,
 				B67483DA1ACA2D6800A9970E /* AppDelegate.swift */,
 				B67483DC1ACA2D6800A9970E /* ViewController.swift */,
+				1E8D075527421D0D00C95F55 /* images.plist */,
 				B694B0191FA377E4009A4277 /* RingBuffer.swift */,
 				B67483DE1ACA2D6800A9970E /* Main.storyboard */,
 				B67483E11ACA2D6800A9970E /* Images.xcassets */,
 				B67483E31ACA2D6800A9970E /* LaunchScreen.xib */,
 				B67483D81ACA2D6800A9970E /* Supporting Files */,
+				1E8D0745274204AF00C95F55 /* HTTPSwiftExample-Bridging-Header.h */,
 			);
 			path = HTTPSwiftExample;
 			sourceTree = "<group>";
@@ -106,8 +134,8 @@
 				TargetAttributes = {
 					B67483D41ACA2D6800A9970E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = APD62CDC25;
-						LastSwiftMigration = 1200;
+						DevelopmentTeam = 3PH8Q4RRFW;
+						LastSwiftMigration = 1310;
 					};
 				};
 			};
@@ -135,6 +163,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E8D075627421D0D00C95F55 /* images.plist in Resources */,
 				B67483E01ACA2D6800A9970E /* Main.storyboard in Resources */,
 				B67483E51ACA2D6800A9970E /* LaunchScreen.xib in Resources */,
 				B67483E21ACA2D6800A9970E /* Images.xcassets in Resources */,
@@ -148,8 +177,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E8D074C274204AF00C95F55 /* CircularBuffer.m in Sources */,
+				1E8D07542742187E00C95F55 /* DataModel.m in Sources */,
 				B67483DD1ACA2D6800A9970E /* ViewController.swift in Sources */,
+				1E8D074D274204AF00C95F55 /* FFTHelper.m in Sources */,
+				1E8D074E274204AF00C95F55 /* Novocaine.m in Sources */,
 				B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */,
+				1E8D07442742040900C95F55 /* AudioModel.swift in Sources */,
 				B694B01A1FA377E4009A4277 /* RingBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,12 +319,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = APD62CDC25;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 3PH8Q4RRFW;
 				INFOPLIST_FILE = HTTPSwiftExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "SMU.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = SMU.HTTPSwiftExample5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HTTPSwiftExample/HTTPSwiftExample-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -299,12 +336,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = APD62CDC25;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 3PH8Q4RRFW;
 				INFOPLIST_FILE = HTTPSwiftExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "SMU.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = SMU.HTTPSwiftExample5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HTTPSwiftExample/HTTPSwiftExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

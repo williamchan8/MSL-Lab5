@@ -28,8 +28,8 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
         self.ModelPicker.dataSource = self
         
         self.ModelPicker.selectRow(0, inComponent: 0, animated: true)
-        self.parameterLabel = "Penalty Number"
-        self.parameter2Label = "N/A"
+        self.parameterLabel.text = "Penalty Number"
+        self.parameter2Label.text = "N/A"
         // Do any additional setup after loading the view.
     }
     

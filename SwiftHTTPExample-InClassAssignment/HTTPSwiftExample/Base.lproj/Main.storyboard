@@ -56,9 +56,8 @@
                                     <action selector="makeModel:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="8rn-ZV-hYa"/>
                                 </connections>
                             </button>
-                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="CvY-G0-1rD">
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="CvY-G0-1rD">
                                 <rect key="frame" x="241" y="39" width="94" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="stepperDSID:" destination="vXZ-lx-hvc" eventType="valueChanged" id="zku-b9-UEJ"/>
                                 </connections>
@@ -72,6 +71,15 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6BZ-Bc-ys0">
+                                <rect key="frame" x="134" y="338" width="99" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Test Button"/>
+                                <connections>
+                                    <action selector="testAudio:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="slL-y5-9oj"/>
+                                </connections>
+                            </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o4H-4Z-DlZ">
                                 <rect key="frame" x="67" y="191" width="241" height="128"/>
                                 <constraints>
@@ -89,6 +97,7 @@
                             <constraint firstItem="yA7-nd-seT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="JmY-fg-drR"/>
                             <constraint firstItem="kXJ-SL-qGM" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="SBS-4X-IRU"/>
                             <constraint firstItem="yA7-nd-seT" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="VrV-uX-lFx"/>
+                            <constraint firstItem="CvY-G0-1rD" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="39" id="WT8-Ni-YgX"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="Q83-th-e1u" secondAttribute="bottom" constant="20" id="XgC-Er-Szf"/>
                             <constraint firstItem="Q83-th-e1u" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="XyN-Cw-SqW"/>
                             <constraint firstItem="o4H-4Z-DlZ" firstAttribute="centerX" secondItem="jkK-0h-Fcf" secondAttribute="centerX" id="ghY-r8-mQn"/>
@@ -97,6 +106,7 @@
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="kXJ-SL-qGM" secondAttribute="trailingMargin" id="q2a-1d-Qbh"/>
                             <constraint firstItem="jkK-0h-Fcf" firstAttribute="firstBaseline" secondItem="o4H-4Z-DlZ" secondAttribute="baseline" constant="8" symbolType="layoutAnchor" id="sWY-KW-gU0"/>
                             <constraint firstItem="o4H-4Z-DlZ" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="191" id="uO5-Vd-9rT"/>
+                            <constraint firstItem="CvY-G0-1rD" firstAttribute="centerX" secondItem="yA7-nd-seT" secondAttribute="centerX" id="vMN-Tk-LgB"/>
                             <constraint firstItem="o4H-4Z-DlZ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="51" id="y6B-H3-HTp"/>
                             <constraint firstItem="yA7-nd-seT" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="y9e-6H-PmW"/>
                         </constraints>
@@ -107,6 +117,7 @@
                         <outlet property="instrumentPhoto" destination="o4H-4Z-DlZ" id="cWM-eI-10T"/>
                         <outlet property="instrumentPicker" destination="jkK-0h-Fcf" id="5O5-9V-a5f"/>
                         <outlet property="stepperDSIDOutlet" destination="CvY-G0-1rD" id="x84-d9-lEc"/>
+                        <outlet property="testButton" destination="6BZ-Bc-ys0" id="vTS-Ju-hMt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

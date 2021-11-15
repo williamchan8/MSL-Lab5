@@ -52,7 +52,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     var isCalibrating = false
     
     var isWaitingForMotionData = false
-    var instrumentData = ["None","Piano"]
+    var instrumentData = ["Not Piano","Piano"]
+    
     
     var fftData:[Float] = Array.init(repeating: 0.0, count: 44100/2)
     var timeData:[Float] = Array.init(repeating: 0.0, count: 44100)
@@ -64,6 +65,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
     @IBOutlet weak var instrumentPicker: UIPickerView!
     
+    @IBOutlet weak var testButton: UIButton!
     
     @IBOutlet weak var didRecord: UILabel!
     
@@ -102,13 +104,15 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         animation.type = CATransitionType.fade
         animation.duration = 0.5
         
+        didRecord.isHidden = true
+        
         
         self.instrumentPicker.delegate = self
         self.instrumentPicker.dataSource = self
         
-        instrumentPicker.selectRow(0, inComponent: 0, animated: false)
+        instrumentPicker.selectRow(0, inComponent: 0, animated: true)
         
-        print(self.dataModel.numberOfImages())
+        
         
         dsid = 1 // set this and it will update UI
     }
@@ -143,6 +147,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     //MARK: Calibration
     @IBAction func startCalibration(_ sender: AnyObject) {
         
+        didRecord.text = "Listening."
+        didRecord.isHidden = false
         audio.startMicrophoneProcessing(withFps: 10)
         audio.play()
         
@@ -153,10 +159,13 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             self.audio.endAudioProcessing()
             
             self.sendFeatures(self.fftData,withLabel: self.instrumentPicker.selectedRow(inComponent: 0))
+            
+            self.didRecord.text = "Recorded!"
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
+                self.didRecord.isHidden = true
+            }
+            
         })
-        
-        
-        
         
     }
     
@@ -200,7 +209,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         postTask.resume() // start the task
     }
     
-    func getPrediction(_ array:[Double]){
+    func getPrediction(_ array:[Float]){
         let baseURL = "\(SERVER_URL)/PredictOne"
         let postUrl = URL(string: "\(baseURL)")
         
@@ -228,7 +237,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                             let jsonDictionary = self.convertDataToDictionary(with: data)
                             
                             let labelResponse = jsonDictionary["prediction"]!
-                            print(labelResponse)    
+                            print(labelResponse)
+                            print(labelResponse as! String)
                             self.displayLabelResponse(labelResponse as! String)
 
                         }
@@ -239,6 +249,19 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     func displayLabelResponse(_ response:String){
+        
+        DispatchQueue.main.async {
+            switch response {
+            case "['0']":
+                self.didRecord.text = "Not Piano"
+            case "['1']":
+                self.didRecord.text = "Piano"
+            default:
+                self.didRecord.text = "Unsure"
+            }
+            
+            self.didRecord.isHidden = false
+        }
         
     }
     
@@ -272,6 +295,31 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         dataTask.resume() // start the task
         
     }
+    
+    @IBAction func testAudio(_ sender: Any) {
+        
+        didRecord.text = "Listening."
+        didRecord.isHidden = false
+        audio.startMicrophoneProcessing(withFps: 10)
+        audio.play()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000), execute: {
+            self.fftData = self.audio.fftData
+            self.timeData = self.audio.timeData
+            
+            self.audio.endAudioProcessing()
+            
+            self.getPrediction(self.fftData)
+            
+            self.didRecord.text = "Recorded!"
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
+                self.didRecord.isHidden = true
+            }
+            
+        })
+        
+    }
+    
     
     //MARK: JSON Conversion Functions
     func convertDictionaryToData(with jsonUpload:NSDictionary) -> Data?{
@@ -310,7 +358,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 1
+            return 2
         }
         
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -318,12 +366,13 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        print(instrumentData[row])
         return instrumentData[row]
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if let name = instrumentData[row] as? String {
-            instrumentPhoto?.image? = self.dataModel.getImageWithName(name)
+            //instrumentPhoto?.image? = self.dataModel.getImageWithName(name)
         }
     }
     

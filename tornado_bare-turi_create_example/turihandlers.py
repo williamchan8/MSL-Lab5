@@ -2,6 +2,7 @@
 
 from pymongo import MongoClient
 import tornado.web
+from sklearn.neighbors import KNeighborsClassifer
 
 from tornado.web import HTTPError
 from tornado.httpserver import HTTPServer
@@ -63,17 +64,61 @@ class UpdateModelForDatasetId(BaseHandler):
 
         data = self.get_features_and_labels_as_SFrame(dsid)
 
+        modelType = self.get_argument("modelType",default = "")
+
+        modelParam = self.get_argument("params",default = [])
+
         # fit the model to the data
         acc = -1
         best_model = 'unknown'
         if len(data)>0:
+
+            if(modelType == "SVM"){
+
+                model = tc.svm_classifier.create(data,target='target',penalty = modelParam[0],verbose = 0)
+                yhat = model.predict(data)
+                self.clf[dsid] = model
+                acc = sum(yhat==data['target'])/float(len(data))
+                # save model for use later, if desired
+                model.save('../models/turi_model_dsid%d'%(dsid))
+
+            }
+            else if(modelType == "KNN"){
+                
+                f = []
+                l = []
+
+                for x in self.db.labeledinstances.find({"dsid": dsid}):
+                    l.append(x['label'])
+                    f.append(float(val)for val in x['feature'])
+
+        
+                model = KNeighborsClassifer(n_neighbors = modelParam[0])
+                model.fit(f,l)
+                yhat = model.predict(f)
+                self.clf[dsid] = model
+                acc = sum(yhat==l)/float(len(l))
+                # save model for use later, if desired
+                #model.save('../models/turi_model_dsid%d'%(dsid))
+
+                bytes = pickle.dump(model)
+                self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
+
+            }
+            else if(modelType == "Compare"){
+
+            }
+            else{
+
+                model = tc.classifier.create(data,target='target',verbose=0)# training
+                yhat = model.predict(data)
+                self.clf[dsid] = model
+                acc = sum(yhat==data['target'])/float(len(data))
+                # save model for use later, if desired
+                model.save('../models/turi_model_dsid%d'%(dsid))
+
+            }
             
-            model = tc.classifier.create(data,target='target',verbose=0)# training
-            yhat = model.predict(data)
-            self.clf[dsid] = model
-            acc = sum(yhat==data['target'])/float(len(data))
-            # save model for use later, if desired
-            model.save('../models/turi_model_dsid%d'%(dsid))
             
 
         # send back the resubstitution accuracy

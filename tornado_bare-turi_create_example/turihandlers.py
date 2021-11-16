@@ -2,7 +2,7 @@
 
 from pymongo import MongoClient
 import tornado.web
-from sklearn.neighbors import KNeighborsClassifer
+from sklearn.neighbors import KNeighborsClassifier
 
 from tornado.web import HTTPError
 from tornado.httpserver import HTTPServer
@@ -64,36 +64,38 @@ class UpdateModelForDatasetId(BaseHandler):
 
         data = self.get_features_and_labels_as_SFrame(dsid)
 
-        modelType = self.get_argument("modelType",default = "")
+        modelType = int(self.get_argument("modelType",default = ""))
 
-        modelParam = self.get_argument("params",default = [])
+        modelParam0 = int(self.get_argument("param0", default = 1))
+
+        modelParam1 = int(self.get_argument("param1", default = 1))
+        
 
         # fit the model to the data
         acc = -1
         best_model = 'unknown'
         if len(data)>0:
-
-            if(modelType == "SVM"){
-
-                model = tc.svm_classifier.create(data,target='target',penalty = modelParam[0],verbose = 0)
+            
+            if modelType == 0:
+                model = tc.svm_classifier.create(data,target='target',penalty = modelParam0,verbose = 0)
                 yhat = model.predict(data)
                 self.clf[dsid] = model
                 acc = sum(yhat==data['target'])/float(len(data))
                 # save model for use later, if desired
                 model.save('../models/turi_model_dsid%d'%(dsid))
 
-            }
-            else if(modelType == "KNN"){
+            
+            elif modelType == 1 :
                 
                 f = []
                 l = []
 
                 for x in self.db.labeledinstances.find({"dsid": dsid}):
                     l.append(x['label'])
-                    f.append(float(val)for val in x['feature'])
+                    f.append([float(val)for val in x['feature']])
 
         
-                model = KNeighborsClassifer(n_neighbors = modelParam[0])
+                model = KNeighborsClassifier(n_neighbors = modelParam0)
                 model.fit(f,l)
                 yhat = model.predict(f)
                 self.clf[dsid] = model
@@ -104,16 +106,18 @@ class UpdateModelForDatasetId(BaseHandler):
                 bytes = pickle.dump(model)
                 self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
 
-            }
-            else if(modelType == "Compare"){
+            
+            elif modelType == 2:
+
+                print("Hello Fuckers")
                 f = []
                 l = []
 
                 for x in self.db.labeledinstances.find({"dsid": dsid}):
                     l.append(x['label'])
-                    f.append(float(val)for val in x['feature'])
+                    f.append([float(val)for val in x['feature']])
 
-                model_1 = tc.svm_classifier.create(data,target='target',penalty = modelParam[1],verbose = 0)
+                model_1 = tc.svm_classifier.create(data,target='target',penalty = modelParam1,verbose = 0)
                 yhat_1 = model_1.predict(data)
                 #self.clf[dsid] = model
                 acc_1 = sum(yhat_1==data['target'])/float(len(data))
@@ -121,7 +125,7 @@ class UpdateModelForDatasetId(BaseHandler):
                 #model.save('../models/turi_model_dsid%d'%(dsid))
 
         
-                model_2 = KNeighborsClassifer(n_neighbors = modelParam[0])
+                model_2 = KNeighborsClassifier(n_neighbors = modelParam0)
                 model_2.fit(f,l)
                 yhat_2 = model_2.predict(f)
                 #self.clf[dsid] = model
@@ -130,7 +134,7 @@ class UpdateModelForDatasetId(BaseHandler):
                 if acc_1 >= acc_2:
                     acc = acc_1
                     self.clf[dsid] = model_1
-                    model.save('../models/turi_model_dsid%d'%(dsid))
+                    model_1.save('../models/turi_model_dsid%d'%(dsid))
                     best_model = 'SVM'
                 else:
                     acc = acc_2
@@ -139,8 +143,8 @@ class UpdateModelForDatasetId(BaseHandler):
                     self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
                     best_model = 'KNN'
 
-            }
-            else{
+            
+            else:
 
                 model = tc.classifier.create(data,target='target',verbose=0)# training
                 yhat = model.predict(data)
@@ -149,7 +153,7 @@ class UpdateModelForDatasetId(BaseHandler):
                 # save model for use later, if desired
                 model.save('../models/turi_model_dsid%d'%(dsid))
 
-            }
+            
             
             
 

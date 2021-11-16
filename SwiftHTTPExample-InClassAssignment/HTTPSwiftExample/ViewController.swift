@@ -241,8 +241,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                             let jsonDictionary = self.convertDataToDictionary(with: data)
                             
                             let labelResponse = jsonDictionary["prediction"]!
-                            print(labelResponse)
-                            print(labelResponse as! String)
+                                                                                    
                             self.displayLabelResponse(labelResponse as! String)
 
                         }
@@ -280,7 +279,15 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     func setParametersAndTrain(modelType: Int, withParameters parameters:[Int]) {
         // create a GET request for server to update the ML model with current data
         let baseURL = "\(SERVER_URL)/UpdateModel"
-        let query = "?dsid=\(self.dsid)"
+    
+        var query = "?dsid=\(self.dsid)&modelType=\(modelType)"
+        
+        print(parameters.count)
+        for index in 0..<parameters.count{
+            
+            query += "&param\(index)=\(parameters[index])"
+            
+        }
         
         let getUrl = URL(string: baseURL+query)
         let request: URLRequest = URLRequest(url: getUrl!)
@@ -297,6 +304,23 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                     
                     if let resubAcc = jsonDictionary["resubAccuracy"]{
                         print("Resubstitution Accuracy is", resubAcc)
+                    }
+                    
+                    let bestModel = jsonDictionary["best_model"]!
+                    print(bestModel)
+                    if(bestModel as! String != "unknown"){
+                        
+                        DispatchQueue.main.async {
+                            self.didRecord.text = (bestModel as! String)
+                            
+                            self.didRecord.isHidden = false
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000), execute: {
+                            self.didRecord.isHidden = true
+                        })
+                    
+                        
                     }
                 }
                                                                     

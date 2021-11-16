@@ -4,7 +4,7 @@
 		"num_segments" : 1
 	},
 	"segment_files" : {
-		"0000" : "m_d4d9e1f648945d4e.0000"
+		"0000" : "m_b7963a05cfc87205.0000"
 	},
 	"columns" : [
 		{
@@ -29,15 +29,6 @@
 			"content_type" : "",
 			"metadata" : {
 				"__type__" : "2"
-			},
-			"segment_sizes" : {
-				"0000" : "22051"
-			}
-		},
-		{
-			"content_type" : "",
-			"metadata" : {
-				"__type__" : "1"
 			},
 			"segment_sizes" : {
 				"0000" : "22051"

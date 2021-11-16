@@ -109,7 +109,7 @@ class UpdateModelForDatasetId(BaseHandler):
             
             elif modelType == 2:
 
-                print("Hello Fuckers")
+                
                 f = []
                 l = []
 

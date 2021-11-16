@@ -212,3 +212,18 @@ class PredictOneFromDatasetId(BaseHandler):
 
         # send back the SFrame of the data
         return tc.SFrame(data=data)
+
+class ExportModel(BaseHandler) :
+    def get(self):
+
+        dsid = self.get_int_arg("dsid",default=0)
+
+        try:
+            self.clf[dsid].export_coreml("PianoModel.mlmodel")
+
+        except:
+            self.write_json({"Status": "Failed"})
+
+        self.write_json({"Status": "Success"})
+
+

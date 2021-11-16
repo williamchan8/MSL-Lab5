@@ -13,6 +13,7 @@
 		1E8D074E274204AF00C95F55 /* Novocaine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D074A274204AF00C95F55 /* Novocaine.m */; };
 		1E8D07542742187E00C95F55 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D07532742187E00C95F55 /* DataModel.m */; };
 		1E8D075627421D0D00C95F55 /* images.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1E8D075527421D0D00C95F55 /* images.plist */; };
+		1E8D0758274471B900C95F55 /* PianoModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 1E8D0757274471B900C95F55 /* PianoModel.mlmodel */; };
 		2ECCD6ED2743167A00C6AA81 /* ModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECCD6EC2743167A00C6AA81 /* ModalViewController.swift */; };
 		B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67483DA1ACA2D6800A9970E /* AppDelegate.swift */; };
 		B67483DD1ACA2D6800A9970E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67483DC1ACA2D6800A9970E /* ViewController.swift */; };
@@ -34,6 +35,7 @@
 		1E8D07522742187E00C95F55 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		1E8D07532742187E00C95F55 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
 		1E8D075527421D0D00C95F55 /* images.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = images.plist; sourceTree = "<group>"; };
+		1E8D0757274471B900C95F55 /* PianoModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = PianoModel.mlmodel; path = "../../tornado_bare-turi_create_example/PianoModel.mlmodel"; sourceTree = "<group>"; };
 		2ECCD6EC2743167A00C6AA81 /* ModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
 		B67483D51ACA2D6800A9970E /* HTTPSwiftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTTPSwiftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B67483D91ACA2D6800A9970E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 		B67483D71ACA2D6800A9970E /* HTTPSwiftExample */ = {
 			isa = PBXGroup;
 			children = (
+				1E8D0757274471B900C95F55 /* PianoModel.mlmodel */,
 				1E8D07522742187E00C95F55 /* DataModel.h */,
 				1E8D07532742187E00C95F55 /* DataModel.m */,
 				1E8D0747274204AF00C95F55 /* CircularBuffer.h */,
@@ -188,6 +191,7 @@
 				B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */,
 				1E8D07442742040900C95F55 /* AudioModel.swift in Sources */,
 				2ECCD6ED2743167A00C6AA81 /* ModalViewController.swift in Sources */,
+				1E8D0758274471B900C95F55 /* PianoModel.mlmodel in Sources */,
 				B694B01A1FA377E4009A4277 /* RingBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

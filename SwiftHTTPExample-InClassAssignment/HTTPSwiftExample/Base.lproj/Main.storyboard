@@ -72,8 +72,23 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o4H-4Z-DlZ">
+                                <rect key="frame" x="67" y="191" width="241" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="kH0-6f-riD"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aBm-3r-d7c">
+                                <rect key="frame" x="188" y="338" width="126" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Toggle CoreML "/>
+                                <connections>
+                                    <action selector="toggleCoreML:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="puI-kz-LBk"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6BZ-Bc-ys0">
-                                <rect key="frame" x="134" y="338" width="99" height="31"/>
+                                <rect key="frame" x="67" y="338" width="99" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Test Button"/>
@@ -81,12 +96,15 @@
                                     <action selector="testAudio:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="slL-y5-9oj"/>
                                 </connections>
                             </button>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o4H-4Z-DlZ">
-                                <rect key="frame" x="67" y="191" width="241" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="kH0-6f-riD"/>
-                                </constraints>
-                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AJV-iN-c4O">
+                                <rect key="frame" x="298" y="628" width="93" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Export Model"/>
+                                <connections>
+                                    <action selector="exportModel:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="exo-MP-PTQ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -119,11 +137,12 @@
                         <outlet property="instrumentPicker" destination="jkK-0h-Fcf" id="5O5-9V-a5f"/>
                         <outlet property="stepperDSIDOutlet" destination="CvY-G0-1rD" id="x84-d9-lEc"/>
                         <outlet property="testButton" destination="6BZ-Bc-ys0" id="vTS-Ju-hMt"/>
+                        <outlet property="toggleCoreButton" destination="aBm-3r-d7c" id="C3I-k7-0ao"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="293.47826086956525" y="197.20982142857142"/>
+            <point key="canvasLocation" x="292" y="196.55172413793105"/>
         </scene>
         <!--Modal View Controller-->
         <scene sceneID="8VN-Kk-sDj">

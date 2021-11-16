@@ -18,7 +18,7 @@
 let SERVER_URL = "http://192.168.0.11:8000" // change this for your server name!!!
 
 import UIKit
-import CoreMotion
+import CoreML
 
 protocol ModalDelegate {
     func setParametersAndTrain(modelType: Int, withParameters parameters:[Int])
@@ -50,13 +50,23 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
     var ringBuffer = RingBuffer()
     let animation = CATransition()
-    let motion = CMMotionManager()
+    
     
     var magValue = 0.1
     var isCalibrating = false
     
     var isWaitingForMotionData = false
     var instrumentData = ["Not Piano","Piano"]
+    
+    lazy var turiModel:PianoModel = {
+        do{
+            let config = MLModelConfiguration()
+            return try PianoModel(configuration: config)
+        }catch{
+            print(error)
+            fatalError("Could not load custom model")
+        }
+    }()
     
     
     var fftData:[Float] = Array.init(repeating: 0.0, count: 44100/2)
@@ -73,6 +83,10 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
     @IBOutlet weak var didRecord: UILabel!
     
+    @IBOutlet weak var toggleCoreButton: UIButton!
+    
+
+    
     // MARK: Class Properties with Observers
     
     
@@ -85,7 +99,18 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             }
         }
     }
-    
+    // convert to ML Multi array
+    // https://github.com/akimach/GestureAI-CoreML-iOS/blob/master/GestureAI/GestureViewController.swift
+    private func toMLMultiArray(_ arr: [Double]) -> MLMultiArray {
+        guard let sequence = try? MLMultiArray(shape:[22050], dataType:MLMultiArrayDataType.double) else {
+            fatalError("Unexpected runtime error. MLMultiArray could not be created")
+        }
+        let size = Int(truncating: sequence.shape[0])
+        for i in 0..<size {
+            sequence[i] = NSNumber(floatLiteral: arr[i])
+        }
+        return sequence
+    }
    
     
     // MARK: Core Motion Updates
@@ -188,7 +213,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                                        "label":"\(label)",
                                        "dsid":self.dsid]
         
-        print(jsonUpload)
+        
         let requestBody:Data? = self.convertDictionaryToData(with:jsonUpload)
         
         request.httpMethod = "POST"
@@ -282,7 +307,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
         var query = "?dsid=\(self.dsid)&modelType=\(modelType)"
         
-        print(parameters.count)
+        
         for index in 0..<parameters.count{
             
             query += "&param\(index)=\(parameters[index])"
@@ -307,7 +332,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
                     }
                     
                     let bestModel = jsonDictionary["best_model"]!
-                    print(bestModel)
+                    
                     if(bestModel as! String != "unknown"){
                         
                         DispatchQueue.main.async {
@@ -346,8 +371,22 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             
             self.didRecord.text = "Recorded!"
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
-                self.getPrediction(self.fftData)
-                //self.didRecord.isHidden = true
+                
+                if(self.coreMLFlag){
+                    //predict a label
+                    let doubleArray:[Double] = self.fftData.map{Double($0)}
+                    let seq = self.toMLMultiArray(doubleArray)
+                
+                    
+                    guard let outputTuri = try? self.turiModel.prediction(sequence: seq) else {
+                        
+                        fatalError("Unexpected runtime error.")
+                    }
+                    let tempOutput = "['" + outputTuri.target + "']"
+                    self.displayLabelResponse(tempOutput)
+                }else{
+                    self.getPrediction(self.fftData)
+                }
             }
             
         })
@@ -389,6 +428,46 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     @IBAction func stepperDSID(_ sender: UIStepper) {
         let temp = sender.value
         self.dsid = Int(temp)
+    }
+    
+    
+    @IBAction func exportModel(_ sender: Any) {
+        
+        // create a GET request for server to update the ML model with current data
+        let baseURL = "\(SERVER_URL)/ExportModel"
+        let query = "?dsid=\(self.dsid)"
+        let getUrl = URL(string: baseURL+query)
+        let request: URLRequest = URLRequest(url: getUrl!)
+        let dataTask : URLSessionDataTask = self.session.dataTask(with: request,
+              completionHandler:{(data, response, error) in
+                // handle error!
+                if (error != nil) {
+                    if let res = response{
+                        print("Response:\n",res)
+                    }
+                }
+                else{
+                    let jsonDictionary = self.convertDataToDictionary(with: data)
+                    print("Model Exported")
+                }
+                                                                    
+        })
+
+        dataTask.resume() // start the task
+        
+        
+    }
+    
+    var coreMLFlag = false
+    
+    @IBAction func toggleCoreML(_ sender: Any) {
+        
+        coreMLFlag.toggle()
+        if(coreMLFlag){
+            self.toggleCoreButton.setTitle("Using CoreML", for:.normal)
+        }else{
+            self.toggleCoreButton.setTitle("Not Using CoreML", for:.normal)
+        }
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {

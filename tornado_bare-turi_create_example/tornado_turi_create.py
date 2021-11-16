@@ -43,7 +43,8 @@ class Application(tornado.web.Application):
                     (r"/GetExample[/]?",      eh.TestHandler),
                     (r"/DoPost[/]?",          eh.PostHandlerAsGetArguments),
                     (r"/PostWithJson[/]?",    eh.JSONPostHandler),
-                    (r"/MSLC[/]?",            eh.MSLC),             
+                    (r"/MSLC[/]?",            eh.MSLC),      
+                    (r"/ExportModel[/]?",    th.ExportModel),
                     ]
 
         self.handlers_string = str(handlers)

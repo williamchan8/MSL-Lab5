@@ -106,6 +106,38 @@ class UpdateModelForDatasetId(BaseHandler):
 
             }
             else if(modelType == "Compare"){
+                f = []
+                l = []
+
+                for x in self.db.labeledinstances.find({"dsid": dsid}):
+                    l.append(x['label'])
+                    f.append(float(val)for val in x['feature'])
+
+                model_1 = tc.svm_classifier.create(data,target='target',penalty = modelParam[1],verbose = 0)
+                yhat_1 = model_1.predict(data)
+                #self.clf[dsid] = model
+                acc_1 = sum(yhat_1==data['target'])/float(len(data))
+                # save model for use later, if desired
+                #model.save('../models/turi_model_dsid%d'%(dsid))
+
+        
+                model_2 = KNeighborsClassifer(n_neighbors = modelParam[0])
+                model_2.fit(f,l)
+                yhat_2 = model_2.predict(f)
+                #self.clf[dsid] = model
+                acc_2 = sum(yhat_2==l)/float(len(l))
+
+                if acc_1 >= acc_2:
+                    acc = acc_1
+                    self.clf[dsid] = model_1
+                    model.save('../models/turi_model_dsid%d'%(dsid))
+                    best_model = 'SVM'
+                else:
+                    acc = acc_2
+                    self.clf[dsid] = model_2
+                    bytes = pickle.dump(model_2)
+                    self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
+                    best_model = 'KNN'
 
             }
             else{
@@ -123,7 +155,8 @@ class UpdateModelForDatasetId(BaseHandler):
 
         # send back the resubstitution accuracy
         # if training takes a while, we are blocking tornado!! No!!
-        self.write_json({"resubAccuracy":acc})
+        self.write_json({"resubAccuracy":acc,
+                            "best_model":best_model})
 
     def get_features_and_labels_as_SFrame(self, dsid):
         # create feature vectors from database

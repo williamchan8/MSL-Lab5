@@ -318,11 +318,12 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             
             self.audio.endAudioProcessing()
             
-            self.getPrediction(self.fftData)
+            
             
             self.didRecord.text = "Recorded!"
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
-                self.didRecord.isHidden = true
+                self.getPrediction(self.fftData)
+                //self.didRecord.isHidden = true
             }
             
         })

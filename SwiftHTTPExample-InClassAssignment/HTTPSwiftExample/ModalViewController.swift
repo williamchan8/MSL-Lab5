@@ -12,7 +12,7 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
     
     var delegate:ModalDelegate?
 
-    var models = ["SVM", "KNN", "Compare"]
+    var models = ["SVM", "KNN", "Compare", "Do Everything Give Me the Best"]
     
     @IBOutlet weak var ModelPicker: UIPickerView!
     @IBOutlet weak var parameterLabel: UILabel!

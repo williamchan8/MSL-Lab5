@@ -10,10 +10,13 @@ import UIKit
 
 class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource {
     
+    //delegate to get protocol functions from main view
     var delegate:ModalDelegate?
 
+    //List of possible models that can be trained
     var models = ["SVM", "KNN", "Compare", "Do Everything Give Me the Best"]
     
+    //MARK: Outlets for UI connections
     @IBOutlet weak var ModelPicker: UIPickerView!
     @IBOutlet weak var parameterLabel: UILabel!
     @IBOutlet weak var parameterTextField: UITextField!
@@ -38,9 +41,10 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
         textField.resignFirstResponder()
     }
     
+    //MARK: Maitenance Functions for Picker Wheel
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
             return 1
-        }
+    }
         
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return models.count
@@ -79,6 +83,7 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
         }
     }
     
+    //Button action to invoke delegate protocol function and pass parameters back to main view (for model training)
     @IBAction func submitParameters(_ sender: Any) {
         let modelType = self.ModelPicker.selectedRow(inComponent: 0)
         var params:[Int] = []
@@ -95,15 +100,5 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
         }
         dismiss(animated: true, completion: nil)
     }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -2,8 +2,7 @@
 //  ViewController.swift
 //  HTTPSwiftExample
 //
-//  Created by Eric Larson on 3/30/15.
-//  Copyright (c) 2015 Eric Larson. All rights reserved.
+//  Created by Ubicomp on 11/6/21
 //
 
 // This exampe is meant to be run with the python example:
@@ -14,12 +13,12 @@
 // if you do not know your local sharing server name try:
 //    ifconfig |grep inet   
 // to see what your public facing IP address is, the ip address can be used here
-//let SERVER_URL = "http://erics-macbook-pro.local:8000" // change this for your server name!!!
 let SERVER_URL = "http://192.168.0.11:8000" // change this for your server name!!!
 
 import UIKit
 import CoreML
 
+//The protocol used in order to use a responsive Modal View for training different models
 protocol ModalDelegate {
     func setParametersAndTrain(modelType: Int, withParameters parameters:[Int])
 }
@@ -39,6 +38,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             delegateQueue:self.operationQueue)
     }()
     
+    //AudioModel used to capture microphone data, with a buffer size appropriate for lower sampling rate phones
     let audio = AudioModel(buffer_size: 44100)
     
     lazy var dataModel = {return DataModel.sharedInstance()}()
@@ -48,16 +48,13 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     let motionOperationQueue = OperationQueue()
     let calibrationOperationQueue = OperationQueue()
     
-    var ringBuffer = RingBuffer()
     let animation = CATransition()
     
-    
-    var magValue = 0.1
-    var isCalibrating = false
-    
-    var isWaitingForMotionData = false
+    //Labels to fill a picker wheel for model classification task
     var instrumentData = ["Not Piano","Piano"]
     
+    
+    //Pre-made model for piano sound classification, used only when appropriate boolean flag is set
     lazy var turiModel:PianoModel = {
         do{
             let config = MLModelConfiguration()
@@ -68,10 +65,12 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         }
     }()
     
-    
+    //Local variables to store raw data and fft data for passing to model
     var fftData:[Float] = Array.init(repeating: 0.0, count: 44100/2)
     var timeData:[Float] = Array.init(repeating: 0.0, count: 44100)
     
+    
+    // MARK: ViewController Outlets
     @IBOutlet weak var stepperDSIDOutlet: UIStepper!
     @IBOutlet weak var dsidLabel: UILabel!
     
@@ -88,8 +87,6 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
 
     
     // MARK: Class Properties with Observers
-    
-    
     var dsid:Int = 0 {
         didSet{
             DispatchQueue.main.async{
@@ -99,8 +96,11 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             }
         }
     }
+    
     // convert to ML Multi array
     // https://github.com/akimach/GestureAI-CoreML-iOS/blob/master/GestureAI/GestureViewController.swift
+    // adapted from link above to work for our dataset
+    // It should use floats instead of doubles, but apparently floats aren't supported on the iOS versions we had access to
     private func toMLMultiArray(_ arr: [Double]) -> MLMultiArray {
         guard let sequence = try? MLMultiArray(shape:[22050], dataType:MLMultiArrayDataType.double) else {
             fatalError("Unexpected runtime error. MLMultiArray could not be created")
@@ -111,16 +111,6 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         }
         return sequence
     }
-   
-    
-    // MARK: Core Motion Updates
-    
-    
-    
-    //MARK: Calibration procedure
-    
-    
-    
     
     // MARK: View Controller Life Cycle
     override func viewDidLoad() {
@@ -135,12 +125,10 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         
         didRecord.isHidden = true
         
-        
+        //set delegate things for picker wheel
         self.instrumentPicker.delegate = self
         self.instrumentPicker.dataSource = self
-        
         instrumentPicker.selectRow(0, inComponent: 0, animated: true)
-        
         
         
         dsid = 1 // set this and it will update UI
@@ -174,6 +162,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     //MARK: Calibration
+    //Hijacked previous "calibration" function, this takes care of taking a sample of audio to train a model
+    //Samples are 1 second in length and labeled as either Piano or Not Piano (binary classification)
     @IBAction func startCalibration(_ sender: AnyObject) {
         
         didRecord.text = "Listening."
@@ -199,6 +189,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     //MARK: Comm with Server
+    //send data to server to store and use for model training
     func sendFeatures(_ array:[Float], withLabel label:Int){
         let baseURL = "\(SERVER_URL)/AddDataPoint"
         let postUrl = URL(string: "\(baseURL)")
@@ -238,6 +229,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         postTask.resume() // start the task
     }
     
+    //MARK: Comm with Server to query ML Model
     func getPrediction(_ array:[Float]){
         let baseURL = "\(SERVER_URL)/PredictOne"
         let postUrl = URL(string: "\(baseURL)")
@@ -275,7 +267,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         
         postTask.resume() // start the task
     }
-    
+    //Display response from model query
     func displayLabelResponse(_ response:String){
         
         DispatchQueue.main.async {
@@ -293,7 +285,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         
     }
     
-    
+    //Button action to segue to model creation Modal View
     @IBAction func makeModel(_ sender: AnyObject) {
         let modalController = storyboard?.instantiateViewController(withIdentifier: "ModalViewController") as! ModalViewController
         modalController.delegate = self
@@ -301,17 +293,16 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         
     }
     
+    //Protocol function that's run after modal view is returned from, takes parameters from modal view to train appropriate model
     func setParametersAndTrain(modelType: Int, withParameters parameters:[Int]) {
         // create a GET request for server to update the ML model with current data
         let baseURL = "\(SERVER_URL)/UpdateModel"
     
         var query = "?dsid=\(self.dsid)&modelType=\(modelType)"
         
-        
+        //add correct parameters to query
         for index in 0..<parameters.count{
-            
             query += "&param\(index)=\(parameters[index])"
-            
         }
         
         let getUrl = URL(string: baseURL+query)
@@ -354,6 +345,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         dataTask.resume() // start the task
     }
     
+    //Button to Query Model for a prediction. Takes 1 second of audio and applies model for binary classification
     @IBAction func testAudio(_ sender: Any) {
         
         didRecord.text = "Listening."
@@ -366,8 +358,6 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
             self.timeData = self.audio.timeData
             
             self.audio.endAudioProcessing()
-            
-            
             
             self.didRecord.text = "Recorded!"
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(800)) {
@@ -425,12 +415,14 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     }
     
     
+    //Stepper action to change DSID
     @IBAction func stepperDSID(_ sender: UIStepper) {
         let temp = sender.value
         self.dsid = Int(temp)
     }
     
-    
+    //Button action to create a new CoreML exported model
+    //For use by engineers, should remove in "Final Release"
     @IBAction func exportModel(_ sender: Any) {
         
         // create a GET request for server to update the ML model with current data
@@ -458,8 +450,8 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         
     }
     
+    //Button action to change whether you want to use CoreML local model or server model for classification
     var coreMLFlag = false
-    
     @IBAction func toggleCoreML(_ sender: Any) {
         
         coreMLFlag.toggle()
@@ -470,9 +462,10 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         }
     }
     
+    //MARK: Maitenance functions for Picker Wheel
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
             return 1
-        }
+    }
         
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return instrumentData.count

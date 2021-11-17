@@ -64,10 +64,11 @@ class UpdateModelForDatasetId(BaseHandler):
 
         data = self.get_features_and_labels_as_SFrame(dsid)
 
+        #Parameter containing model type to use (as an Int)
         modelType = int(self.get_argument("modelType",default = ""))
 
+        #Parameters for model training, if not doing comparison only one of these is set
         modelParam0 = int(self.get_argument("param0", default = 1))
-
         modelParam1 = int(self.get_argument("param1", default = 1))
         
 
@@ -76,6 +77,7 @@ class UpdateModelForDatasetId(BaseHandler):
         best_model = 'unknown'
         if len(data)>0:
             
+            #Train an SVM model
             if modelType == 0:
                 model = tc.svm_classifier.create(data,target='target',penalty = modelParam0,verbose = 0)
                 yhat = model.predict(data)
@@ -84,7 +86,7 @@ class UpdateModelForDatasetId(BaseHandler):
                 # save model for use later, if desired
                 model.save('../models/turi_model_dsid%d'%(dsid))
 
-            
+            #Train a scikit learn KNN model
             elif modelType == 1 :
                 
                 f = []
@@ -106,7 +108,7 @@ class UpdateModelForDatasetId(BaseHandler):
                 bytes = pickle.dump(model)
                 self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
 
-            
+            #Train SVM and KNN to compare them
             elif modelType == 2:
 
                 
@@ -143,7 +145,7 @@ class UpdateModelForDatasetId(BaseHandler):
                     self.db.models.update({'dsid' : dsid},{'$set' : {'model' : Binary(bytes)}},upsert = True)
                     best_model = 'KNN'
 
-            
+            #Default, run turicreate classifier to test a ton of model types
             else:
 
                 model = tc.classifier.create(data,target='target',verbose=0)# training
@@ -213,6 +215,7 @@ class PredictOneFromDatasetId(BaseHandler):
         # send back the SFrame of the data
         return tc.SFrame(data=data)
 
+#Class to handle exporting a coreML model from a backend end-point
 class ExportModel(BaseHandler) :
     def get(self):
 

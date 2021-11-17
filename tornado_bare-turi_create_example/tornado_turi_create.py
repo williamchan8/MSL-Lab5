@@ -44,7 +44,7 @@ class Application(tornado.web.Application):
                     (r"/DoPost[/]?",          eh.PostHandlerAsGetArguments),
                     (r"/PostWithJson[/]?",    eh.JSONPostHandler),
                     (r"/MSLC[/]?",            eh.MSLC),      
-                    (r"/ExportModel[/]?",    th.ExportModel),
+                    (r"/ExportModel[/]?",    th.ExportModel), #Export model to CoreML file
                     ]
 
         self.handlers_string = str(handlers)

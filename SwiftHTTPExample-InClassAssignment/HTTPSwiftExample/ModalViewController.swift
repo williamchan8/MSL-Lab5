@@ -14,7 +14,7 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
     var delegate:ModalDelegate?
 
     //List of possible models that can be trained
-    var models = ["SVM", "KNN", "Compare", "Do Everything Give Me the Best"]
+    var models = [/*"SVM", "KNN", "Compare",*/ "Do Everything Give Me the Best"]
     
     //MARK: Outlets for UI connections
     @IBOutlet weak var ModelPicker: UIPickerView!
@@ -87,10 +87,10 @@ class ModalViewController: UIViewController, UITextFieldDelegate,UIPickerViewDel
     @IBAction func submitParameters(_ sender: Any) {
         let modelType = self.ModelPicker.selectedRow(inComponent: 0)
         var params:[Int] = []
-        params.append(Int(parameterTextField.text!) ?? -999)
-        if modelType == 2 {
-            params.append(Int(parameter2TextField.text!) ?? -999)
-        }
+//        params.append(Int(parameterTextField.text!) ?? -999)
+//        if modelType == 2 {
+//            params.append(Int(parameter2TextField.text!) ?? -999)
+//        }
         
         parameterTextField.resignFirstResponder()
         parameter2TextField.resignFirstResponder()

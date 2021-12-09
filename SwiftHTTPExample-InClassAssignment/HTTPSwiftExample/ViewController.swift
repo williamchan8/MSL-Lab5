@@ -51,7 +51,9 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     let animation = CATransition()
     
     //Labels to fill a picker wheel for model classification task
-    var instrumentData = ["Not Piano","Piano"]
+    var instrumentData = ["Piano", "Singing", "Guitar",
+                          "Violin", "Cello", "Saxophone",
+                          "Flute", "Clarinet", "Trumpet", "Drums"]
     
     
     //Pre-made model for piano sound classification, used only when appropriate boolean flag is set
@@ -71,9 +73,6 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
     
     
     // MARK: ViewController Outlets
-    @IBOutlet weak var stepperDSIDOutlet: UIStepper!
-    @IBOutlet weak var dsidLabel: UILabel!
-    
     @IBOutlet weak var instrumentPhoto: UIImageView!
     
     @IBOutlet weak var instrumentPicker: UIPickerView!
@@ -87,15 +86,7 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
 
     
     // MARK: Class Properties with Observers
-    var dsid:Int = 0 {
-        didSet{
-            DispatchQueue.main.async{
-                // update label when set
-                self.dsidLabel.layer.add(self.animation, forKey: nil)
-                self.dsidLabel.text = "Current DSID: \(self.dsid)"
-            }
-        }
-    }
+    var dsid:Int = 100
     
     // convert to ML Multi array
     // https://github.com/akimach/GestureAI-CoreML-iOS/blob/master/GestureAI/GestureViewController.swift
@@ -414,12 +405,6 @@ class ViewController: UIViewController, URLSessionDelegate, UIPickerViewDelegate
         }
     }
     
-    
-    //Stepper action to change DSID
-    @IBAction func stepperDSID(_ sender: UIStepper) {
-        let temp = sender.value
-        self.dsid = Int(temp)
-    }
     
     //Button action to create a new CoreML exported model
     //For use by engineers, should remove in "Final Release"
